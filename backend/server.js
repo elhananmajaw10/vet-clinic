@@ -11,7 +11,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://vet-clinic-1.onrender.com",   // frontend URL
+      "https://vet-clinic-13.onrender.com",   // frontend URL
       "http://localhost:5173"                // dev
     ],
     methods: "GET,POST,PUT,DELETE",
