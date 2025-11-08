@@ -7,12 +7,23 @@ dotenv.config();
 
 const app = express();
 
+// ✅ FIXED CORS — required for frontend on Render
+app.use(
+  cors({
+    origin: [
+      "https://vet-clinic-1.onrender.com",   // frontend URL
+      "http://localhost:5173"                // dev
+    ],
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true
+  })
+);
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/vetclinic', {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -41,9 +52,8 @@ app.use('/api/doctors', doctorRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/uploads', express.static('uploads'));
 
-// Test route
 app.get("/", (req, res) => {
-  res.send({ message: '✅ Vet Clinic API is running!' });
+  res.send({ message: "✅ Vet Clinic API is running!" });
 });
 
 const PORT = process.env.PORT || 5000;
