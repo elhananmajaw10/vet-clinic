@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import api from '../api';
+import.meta.env.VITE_API_URL.replace('/api', '')
+
+
 
 const Dashboard = ({ user }) => {
   const [appointments, setAppointments] = useState([])
@@ -30,7 +34,7 @@ const Dashboard = ({ user }) => {
     try {
       setFetchLoading(true)
       const token = localStorage.getItem('token')
-      const response = await axios.get('/appointments/my-appointments', {
+      const response = await api.get('/appointments/my-appointments', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -41,7 +45,7 @@ const Dashboard = ({ user }) => {
         response.data.map(async (appointment) => {
           if (appointment.doctor) {
             try {
-              const doctorResponse = await axios.get(`/doctors/${appointment.doctor}`)
+              const doctorResponse = await api.get(`/doctors/${appointment.doctor}`)
               return {
                 ...appointment,
                 doctor: doctorResponse.data
@@ -65,7 +69,7 @@ const Dashboard = ({ user }) => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get('/doctors')
+      const response = await api.get('/doctors')
       setDoctors(response.data.filter(doctor => doctor.available))
     } catch (error) {
       console.error('Error fetching doctors:', error)
@@ -94,7 +98,7 @@ const Dashboard = ({ user }) => {
       const formData = new FormData()
       formData.append('petPhoto', file)
 
-      const response = await axios.post('/upload/pet-photo', formData, {
+      const response = await api.post('/upload/pet-photo', formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -134,7 +138,7 @@ const Dashboard = ({ user }) => {
         petType: formData.petType === 'other' ? formData.customPetType : formData.petType
       }
 
-      await axios.post('/appointments', appointmentData, {
+      await api.post('/appointments', appointmentData, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -164,7 +168,7 @@ const Dashboard = ({ user }) => {
     if (window.confirm('Are you sure you want to cancel this appointment?')) {
       try {
         const token = localStorage.getItem('token')
-        await axios.patch(`/appointments/${id}`, { status: 'cancelled' }, {
+        await api.patch(`/appointments/${id}`, { status: 'cancelled' }, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -403,7 +407,7 @@ const Dashboard = ({ user }) => {
                     {formData.petPhoto && (
                       <div style={{ marginTop: '10px' }}>
                         <img 
-                          src={`http://localhost:5000${formData.petPhoto}`} 
+                          src={`${import.meta.env.VITE_API_URL.replace('/api','')}${appointment.petPhoto}`} 
                           alt="Pet preview" 
                           style={{ 
                             width: '100px', 

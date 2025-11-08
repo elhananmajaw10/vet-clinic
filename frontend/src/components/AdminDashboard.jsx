@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import api from '../api';
 
 const AdminDashboard = ({ user }) => {
   const [appointments, setAppointments] = useState([]);
@@ -52,7 +53,7 @@ const AdminDashboard = ({ user }) => {
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('/appointments', {
+      const response = await api.get('/appointments', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -62,7 +63,7 @@ const AdminDashboard = ({ user }) => {
         response.data.map(async (appointment) => {
           if (appointment.doctor) {
             try {
-              const doctorResponse = await axios.get(`/doctors/${appointment.doctor}`);
+              const doctorResponse = await api.get(`/doctors/${appointment.doctor}`);
               return {
                 ...appointment,
                 doctor: doctorResponse.data
@@ -83,7 +84,7 @@ const AdminDashboard = ({ user }) => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get('/doctors');
+      const response = await api.get('/doctors');
       setDoctors(response.data);
     } catch (error) {
       console.error('Error fetching doctors:', error);
@@ -93,7 +94,7 @@ const AdminDashboard = ({ user }) => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('/users', {
+      const response = await api.get('/users', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -110,7 +111,7 @@ const AdminDashboard = ({ user }) => {
   const updateAppointmentStatus = async (appointmentId, status) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`/appointments/${appointmentId}`, { status }, {
+      await api.patch(`/appointments/${appointmentId}`, { status }, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -126,7 +127,7 @@ const AdminDashboard = ({ user }) => {
     if (window.confirm('Are you sure you want to delete this appointment?')) {
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`/appointments/${appointmentId}`, {
+        await api.delete(`/appointments/${appointmentId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -155,7 +156,7 @@ const AdminDashboard = ({ user }) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`/appointments/${editingAppointment._id}`, appointmentForm, {
+      await api.put(`/appointments/${editingAppointment._id}`, appointmentForm, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -174,14 +175,14 @@ const AdminDashboard = ({ user }) => {
     try {
       const token = localStorage.getItem('token');
       if (editingDoctor) {
-        await axios.patch(`/doctors/${editingDoctor._id}`, doctorForm, {
+        await api.patch(`/doctors/${editingDoctor._id}`, doctorForm, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
         setSuccess('Doctor updated successfully');
       } else {
-        await axios.post('/doctors', doctorForm, {
+        await api.post('/doctors', doctorForm, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -220,7 +221,7 @@ const AdminDashboard = ({ user }) => {
     if (window.confirm('Are you sure you want to delete this doctor?')) {
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`/doctors/${doctorId}`, {
+        await api.delete(`/doctors/${doctorId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -236,7 +237,7 @@ const AdminDashboard = ({ user }) => {
   const toggleDoctorAvailability = async (doctorId, currentStatus) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`/doctors/${doctorId}`, { available: !currentStatus }, {
+      await api.patch(`/doctors/${doctorId}`, { available: !currentStatus }, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -264,7 +265,7 @@ const AdminDashboard = ({ user }) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`/users/${editingUser._id}`, userForm, {
+      await api.patch(`/users/${editingUser._id}`, userForm, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -281,7 +282,7 @@ const AdminDashboard = ({ user }) => {
     if (window.confirm('Are you sure you want to delete this user? This will also delete all their appointments.')) {
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`/users/${userId}`, {
+        await api.delete(`/users/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -423,7 +424,7 @@ const AdminDashboard = ({ user }) => {
                           <td>
                             {appointment.petPhoto ? (
                               <img 
-                                src={`http://localhost:5000${appointment.petPhoto}`}
+                                src={`${import.meta.env.VITE_API_URL.replace('/api','')}${appointment.petPhoto}`}
                                 alt={appointment.petName}
                                 style={{ 
                                   width: '60px', 
