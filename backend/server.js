@@ -42,8 +42,8 @@ app.use('/api/upload', uploadRoutes);
 app.use('/uploads', express.static('uploads'));
 
 // Test route
-app.get('/api/test', (req, res) => {
-  res.json({ message: '✅ Vet Clinic API is running!' });
+app.get("/", (req, res) => {
+  res.send({ message: '✅ Vet Clinic API is running!' });
 });
 
 const PORT = process.env.PORT || 5000;
